@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Конструктор танков - Country Game</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(145deg, #1a472a 0%, #0e2a1a 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Impact', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Главный контейнер */
+        .game-container {
+            max-width: 1400px;
+            width: 100%;
+            background: rgba(30, 20, 15, 0.75);
+            backdrop-filter: blur(4px);
+            border-radius: 70px 70px 50px 50px;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1);
+            padding: 20px 25px 30px;
+            border: 2px solid #b87c2e;
+        }
+
+        /* шапка */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #f5d742, #c99e2f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+            margin: 0;
+        }
+        .sub {
+            color: #e0cba0;
+            font-weight: bold;
+            font-size: 1rem;
+            background: #2c2118b3;
+            display: inline-block;
+            padding: 5px 20px;
+            border-radius: 40px;
+            margin-top: 6px;
+        }
+
+        /* панель выбора класса танка */
+        .tank-class {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .class-btn {
+            background: #2e241f;
+            border: 3px solid #aa7c48;
+            color: #ffefcf;
+            font-size: 1.6rem;
+            font-weight: bold;
+            padding: 12px 32px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 5px 0 #4a2e1a;
+            font-family: inherit;
+        }
+        .class-btn.active {
+            background: #e1b068;
+            color: #1e2a1a;
+            border-color: #ffdd99;
+            box-shadow: 0 0 12px gold;
+            transform: scale(1.02);
+        }
+        .class-btn.light { background: #6b8c42; }
+        .class-btn.medium { background: #b67e3a; }
+        .class-btn.heavy { background: #5d4a34; }
+
+        /* три блока деталей */
+        .builder-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        .part-card {
+            flex: 1;
+            min-width: 210px;
+            background: #231f1cd9;
+            backdrop-filter: blur(8px);
+            border-radius: 48px;
+            padding: 15px 12px;
+            border: 1px solid #b98f54;
+            box-shadow: 0 8px 18px black;
+        }
+        .part-title {
+            font-size: 1.9rem;
+            text-align: center;
+            font-weight: bold;
+            color: #ffc576;
+            border-bottom: 2px solid #ab7b3e;
+            margin-bottom: 15px;
+        }
+        .material-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .material-option {
+            background: #2d241e;
+            border-radius: 36px;
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.1s;
+            border: 2px solid transparent;
+        }
+        .material-option.selected {
+            border-color: #ffc857;
+            background: #4f3a28;
+            box-shadow: 0 0 8px #ffbc6e;
+        }
+        .mat-name {
+            font-weight: bold;
+            font-size: 1.3rem;
+            width: 85px;
+        }
+        .mat-bonus {
+            font-size: 0.85rem;
+            text-align: right;
+            color: #d4c09b;
+        }
+
+        /* центральная статка */
+        .stats-area {
+            background: #010d07cc;
+            border-radius: 58px;
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+            gap: 18px;
+            border: 1px solid #e5b45a;
+        }
+        .stat-card {
+            background: #1f1b17;
+            border-radius: 30px;
+            padding: 8px 20px;
+            min-width: 140px;
+            text-align: center;
+            box-shadow: inset 0 1px 3px #00000055, 0 4px 8px black;
+        }
+        .stat-label {
+            font-size: 1rem;
+            color: #efcd91;
+            letter-spacing: 1px;
+        }
+        .stat-value {
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: #ffe3a4;
+            line-height: 1;
+        }
+        .extra-armor {
+            background: #414429;
+        }
+        .final-stats {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        button.share-btn {
+            background: #467a34;
+            border: none;
+            font-size: 1.3rem;
+            font-weight: bold;
+            padding: 16px 32px;
+            border-radius: 66px;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 25px;
+            transition: 0.1s linear;
+            font-family: monospace;
+        }
+        button.share-btn:hover {
+            background: #6ca34d;
+            transform: scale(1.01);
+            box-shadow: 0 0 15px #8bc34a;
+        }
+        .info-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #c4aa7a;
+        }
+        @media (max-width: 800px) {
+            .part-title { font-size: 1.5rem; }
+            .stat-value { font-size: 2rem; }
+            .class-btn { font-size: 1.2rem; padding: 6px 18px; }
+        }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <div class="header">
+        <h1>⚙️ ТАНКОВЫЙ КОНСТРУКТОР ⚙️</h1>
+        <div class="sub">▸ выбери класс • материалы для башни, дула, основы ◂</div>
+    </div>
+
+    <div class="tank-class" id="tankClassSelector">
+        <button data-class="light" class="class-btn light">🇱🇮 ЛЁГКИЙ</button>
+        <button data-class="medium" class="class-btn medium">🇲🇪 СРЕДНИЙ</button>
+        <button data-class="heavy" class="class-btn heavy">🇭🇪 ТЯЖЁЛЫЙ</button>
+    </div>
+
+    <div class="builder-panel">
+        <!-- БАШНЯ -->
+        <div class="part-card">
+            <div class="part-title">🗼 БАШНЯ</div>
+            <div class="material-group" id="turretMaterials"></div>
+        </div>
+        <!-- ОСНОВА -->
+        <div class="part-card">
+            <div class="part-title">⛓️ ОСНОВА</div>
+            <div class="material-group" id="hullMaterials"></div>
+        </div>
+        <!-- ДУЛО -->
+        <div class="part-card">
+            <div class="part-title">🔫 ДУЛО</div>
+            <div class="material-group" id="gunMaterials"></div>
+        </div>
+    </div>
+
+    <!-- параметры + допброня -->
+    <div class="stats-area">
+        <div class="stat-card"><div class="stat-label">🚀 СКОРОСТЬ</div><div id="statSpeed" class="stat-value">0</div></div>
+        <div class="stat-card"><div class="stat-label">🛡️ БРОНЯ</div><div id="statArmor" class="stat-value">0</div></div>
+        <div class="stat-card"><div class="stat-label">💥 УРОН</div><div id="statDamage" class="stat-value">0</div></div>
+        <div class="stat-card extra-armor"><div class="stat-label">✨ ДОП. БРОНЯ</div><div id="statExtraArmor" class="stat-value">0</div></div>
+    </div>
+
+    <div class="info-text">
+        🔧 База: Скорость 40 | Броня 120 | Урон 15 | Доп.броня 5 <br>
+        🧩 Каждая деталь добавляет модификаторы. Доп. броня суммируется отдельно!
+    </div>
+    <button class="share-btn" id="copyStatsBtn">📋 СКОПИРОВАТЬ ХАРАКТЕРИСТИКИ ТАНКА</button>
+</div>
+
+<script>
+    // ---------- БАЗОВЫЕ ПАРАМЕТРЫ ----------
+    const BASE_STATS = {
+        speed: 40,
+        armor: 120,
+        damage: 15,
+        extraArmor: 5
+    };
+
+    // ---------- ДАННЫЕ МОДИФИКАТОРОВ ДЕТАЛЕЙ (по классам) ----------
+    // структура: [класс][деталь][материал] -> { speed, armor, damage, extraArmor }
+
+    const modifiers = {
+        light: {
+            turret: {
+                copper: { speed: 5, armor: 15, damage: 0, extraArmor: 0 },
+                steel:  { speed: -8, armor: 20, damage: 0, extraArmor: 10 },
+                tungsten:{ speed: 15, armor: 5, damage: 0, extraArmor: 0 }
+            },
+            hull: {
+                copper: { speed: -10, armor: 20, damage: 0, extraArmor: 0 },
+                steel:  { speed: -10, armor: 25, damage: 0, extraArmor: 25 },
+                tungsten:{ speed: 10, armor: 20, damage: 0, extraArmor: 0 }
+            },
+            gun: {
+                copper: { speed: 5, armor: 5, damage: 5, extraArmor: 0 },
+                steel:  { speed: -5, armor: 10, damage: 10, extraArmor: 5 },
+                tungsten:{ speed: 5, armor: 10, damage: 16, extraArmor: 0 }
+            }
+        },
+        medium: {
+            turret: {
+                copper: { speed: 5, armor: 20, damage: 0, extraArmor: 10 },
+                steel:  { speed: -10, armor: 22, damage: 0, extraArmor: 15 },
+                tungsten:{ speed: 10, armor: 15, damage: 0, extraArmor: 0 }
+            },
+            hull: {
+                copper: { speed: -12, armor: 35, damage: 0, extraArmor: 0 },
+                steel:  { speed: -10, armor: 35, damage: 0, extraArmor: 30 },
+                tungsten:{ speed: 8, armor: 25, damage: 0, extraArmor: 0 }
+            },
+            gun: {
+                copper: { speed: -5, armor: 10, damage: 10, extraArmor: 0 },
+                steel:  { speed: -5, armor: 12, damage: 16, extraArmor: 10 },
+                tungsten:{ speed: 10, armor: 10, damage: 20, extraArmor: 0 }
+            }
+        },
+        heavy: {
+            turret: {
+                copper: { speed: -10, armor: 30, damage: 0, extraArmor: 0 },
+                steel:  { speed: -10, armor: 35, damage: 0, extraArmor: 15 },
+                tungsten:{ speed: 5, armor: 25, damage: 0, extraArmor: 0 }
+            },
+            hull: {
+                copper: { speed: -20, armor: 35, damage: 0, extraArmor: 0 },
+                steel:  { speed: -15, armor: 45, damage: 0, extraArmor: 35 },
+                tungsten:{ speed: 10, armor: 35, damage: 0, extraArmor: 0 }
+            },
+            gun: {
+                copper: { speed: 10, armor: 5, damage: 20, extraArmor: 0 },
+                steel:  { speed: 10, armor: 10, damage: 28, extraArmor: 10 },
+                tungsten:{ speed: 8, armor: 10, damage: 36, extraArmor: 0 }
+            }
+        }
+    };
+
+    // материалы список для рендера
+    const materials = [
+        { id: 'copper', name: '🟠 МЕДЬ', color: '#b87333' },
+        { id: 'steel', name: '⚙️ СТАЛЬ', color: '#7a8e9e' },
+        { id: 'tungsten', name: '🔩 ВОЛЬФРАМ', color: '#5a626e' }
+    ];
+
+    // текущее состояние:
+    let currentClass = 'light';      // 'light', 'medium', 'heavy'
+    let selectedParts = {
+        turret: 'copper',
+        hull: 'copper',
+        gun: 'copper'
+    };
+
+    // DOM элементы
+    const turretContainer = document.getElementById('turretMaterials');
+    const hullContainer = document.getElementById('hullMaterials');
+    const gunContainer = document.getElementById('gunMaterials');
+    const statSpeedSpan = document.getElementById('statSpeed');
+    const statArmorSpan = document.getElementById('statArmor');
+    const statDamageSpan = document.getElementById('statDamage');
+    const statExtraSpan = document.getElementById('statExtraArmor');
+
+    // функция пересчёта всех параметров
+    function computeFinalStats() {
+        // получаем моды для текущего класса
+        const classMod = modifiers[currentClass];
+        if (!classMod) return BASE_STATS;
+
+        const turretMod = classMod.turret[selectedParts.turret] || { speed:0, armor:0, damage:0, extraArmor:0 };
+        const hullMod = classMod.hull[selectedParts.hull] || { speed:0, armor:0, damage:0, extraArmor:0 };
+        const gunMod = classMod.gun[selectedParts.gun] || { speed:0, armor:0, damage:0, extraArmor:0 };
+
+        let totalSpeed = BASE_STATS.speed + turretMod.speed + hullMod.speed + gunMod.speed;
+        let totalArmor = BASE_STATS.armor + turretMod.armor + hullMod.armor + gunMod.armor;
+        let totalDamage = BASE_STATS.damage + turretMod.damage + hullMod.damage + gunMod.damage;
+        let totalExtra = BASE_STATS.extraArmor + (turretMod.extraArmor || 0) + (hullMod.extraArmor || 0) + (gunMod.extraArmor || 0);
+
+        // небольшая обрезка для эстетики, но можно отрицательные? оставим как есть, минималка не ограничена
+        return { speed: totalSpeed, armor: totalArmor, damage: totalDamage, extraArmor: totalExtra };
+    }
+
+    // обновить интерфейс статов
+    function updateUI() {
+        const stats = computeFinalStats();
+        statSpeedSpan.innerText = Math.floor(stats.speed);
+        statArmorSpan.innerText = Math.floor(stats.armor);
+        statDamageSpan.innerText = Math.floor(stats.damage);
+        statExtraSpan.innerText = Math.floor(stats.extraArmor);
+        // дополнительно подсветка активных кнопок классов
+        document.querySelectorAll('.class-btn').forEach(btn => {
+            if(btn.getAttribute('data-class') === currentClass) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    // генерация списка материалов для конкретной детали (partType: 'turret','hull','gun')
+    function renderMaterialSelector(container, partType) {
+        container.innerHTML = '';
+        materials.forEach(mat => {
+            const div = document.createElement('div');
+            div.className = 'material-option';
+            if(selectedParts[partType] === mat.id) div.classList.add('selected');
+            
+            // отображение примерных бонусов для текущего класса
+            const classMod = modifiers[currentClass];
+            let modInfo = { speed:0, armor:0, damage:0, extra:0 };
+            if(classMod && classMod[partType] && classMod[partType][mat.id]) {
+                const m = classMod[partType][mat.id];
+                modInfo = { speed: m.speed, armor: m.armor, damage: m.damage, extra: m.extraArmor || 0 };
+            }
+            const bonusText = `⚡${modInfo.speed>=0?'+':''}${modInfo.speed} 🛡️${modInfo.armor>=0?'+':''}${modInfo.armor} 💥${modInfo.damage>=0?'+':''}${modInfo.damage} ✨+${modInfo.extra}`;
+            
+            div.innerHTML = `
+                <span class="mat-name">${mat.name}</span>
+                <span class="mat-bonus">${bonusText}</span>
+            `;
+            div.addEventListener('click', () => {
+                selectedParts[partType] = mat.id;
+                // перерендер всех трёх панелей, чтобы подсветить выбранное
+                renderMaterialSelector(turretContainer, 'turret');
+                renderMaterialSelector(hullContainer, 'hull');
+                renderMaterialSelector(gunContainer, 'gun');
+                updateUI();
+            });
+            container.appendChild(div);
+        });
+    }
+
+    // смена класса танка
+    function setTankClass(className) {
+        currentClass = className;
+        // при смене класса сохраняем текущие выбранные материалы (они могут быть не валидны? но валидны) 
+        // перерисовываем панели для новых модификаторов
+        renderMaterialSelector(turretContainer, 'turret');
+        renderMaterialSelector(hullContainer, 'hull');
+        renderMaterialSelector(gunContainer, 'gun');
+        updateUI();
+    }
+
+    // кнопка копирования текста
+    function copyStatsToClipboard() {
+        const stats = computeFinalStats();
+        const classNames = { light: 'Лёгкий', medium: 'Средний', heavy: 'Тяжёлый' };
+        const materialName = (id) => {
+            const found = materials.find(m => m.id === id);
+            return found ? found.name : id;
+        };
+        const text = `
+🚀 ТАНК [${classNames[currentClass]}] — КОНСТРУКТОР
+🔩 Башня: ${materialName(selectedParts.turret)}
+⚙️ Основа: ${materialName(selectedParts.hull)}
+🔫 Дуло: ${materialName(selectedParts.gun)}
+━━━━━━━━━━━━━━━━━━━━
+📊 ИТОГОВЫЕ ХАРАКТЕРИСТИКИ:
+⚡ Скорость: ${Math.floor(stats.speed)}
+🛡️ Броня: ${Math.floor(stats.armor)}
+💥 Урон: ${Math.floor(stats.damage)}
+✨ Доп. бронирование: ${Math.floor(stats.extraArmor)}
+━━━━━━━━━━━━━━━━━━━━
+🎮 Создано в Танковом конструкторе!
+        `;
+        navigator.clipboard.writeText(text).then(() => {
+            alert('✅ Характеристики танка скопированы! Можешь поделиться с друзьями.');
+        }).catch(() => {
+            alert('❌ Не удалось скопировать, но можно скопировать вручную.');
+        });
+    }
+
+    // инициализация слушателей для кнопок классов
+    function initClassButtons() {
+        document.querySelectorAll('.class-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const cls = btn.getAttribute('data-class');
+                if(cls === 'light') setTankClass('light');
+                else if(cls === 'medium') setTankClass('medium');
+                else if(cls === 'heavy') setTankClass('heavy');
+            });
+        });
+    }
+
+    // полная загрузка
+    function init() {
+        initClassButtons();
+        // начальные детали - медь везде, как по умолчанию
+        selectedParts = { turret: 'copper', hull: 'copper', gun: 'copper' };
+        setTankClass('light'); // вызовет рендер и расчёт
+        document.getElementById('copyStatsBtn').addEventListener('click', copyStatsToClipboard);
+    }
+
+    init();
+</script>
+</body>
+</html>
