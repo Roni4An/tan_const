@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Конструктор танков - Country Game</title>
+    <title>Конструктор танков - MG_create</title>
     <style>
         * {
             box-sizing: border-box;
@@ -21,7 +21,7 @@
             padding: 20px;
         }
 
-        /* Главный контейнер */
+        /* Главный  экр */
         .game-container {
             max-width: 1400px;
             width: 100%;
@@ -49,7 +49,7 @@
             margin: 0;
         }
         .sub {
-            color: #e0cba0;
+            color: #000000;
             font-weight: bold;
             font-size: 1rem;
             background: #2c2118b3;
@@ -59,7 +59,7 @@
             margin-top: 6px;
         }
 
-        /* панель выбора класса танка */
+        /* панель выбора типа танка */
         .tank-class {
             display: flex;
             justify-content: center;
@@ -91,7 +91,7 @@
         .class-btn.medium { background: #b67e3a; }
         .class-btn.heavy { background: #5d4a34; }
 
-        /* три блока деталей */
+        /* бпок деталей */
         .builder-panel {
             display: flex;
             flex-wrap: wrap;
@@ -149,7 +149,7 @@
             color: #d4c09b;
         }
 
-        /* центральная статка */
+        /* центральная статут */
         .stats-area {
             background: #010d07cc;
             border-radius: 58px;
@@ -225,14 +225,14 @@
 <body>
 <div class="game-container">
     <div class="header">
-        <h1>⚙️ ТАНКОВЫЙ КОНСТРУКТОР ⚙️</h1>
+        <h1>⚙️ КОНСТРУКТОР ТАНКОВ ⚙️</h1>
         <div class="sub">▸ выбери класс • материалы для башни, дула, основы ◂</div>
     </div>
 
     <div class="tank-class" id="tankClassSelector">
-        <button data-class="light" class="class-btn light">🇱🇮 ЛЁГКИЙ</button>
-        <button data-class="medium" class="class-btn medium">🇲🇪 СРЕДНИЙ</button>
-        <button data-class="heavy" class="class-btn heavy">🇭🇪 ТЯЖЁЛЫЙ</button>
+        <button data-class="light" class="class-btn light">ЛЁГКИЙ</button>
+        <button data-class="medium" class="class-btn medium">СРЕДНИЙ</button>
+        <button data-class="heavy" class="class-btn heavy">ТЯЖЁЛЫЙ</button>
     </div>
 
     <div class="builder-panel">
@@ -255,14 +255,14 @@
 
     <!-- параметры + допброня -->
     <div class="stats-area">
-        <div class="stat-card"><div class="stat-label">🚀 СКОРОСТЬ</div><div id="statSpeed" class="stat-value">0</div></div>
-        <div class="stat-card"><div class="stat-label">🛡️ БРОНЯ</div><div id="statArmor" class="stat-value">0</div></div>
-        <div class="stat-card"><div class="stat-label">💥 УРОН</div><div id="statDamage" class="stat-value">0</div></div>
-        <div class="stat-card extra-armor"><div class="stat-label">✨ ДОП. БРОНЯ</div><div id="statExtraArmor" class="stat-value">0</div></div>
+        <div class="stat-card"><div class="stat-label">🚀СКОРОСТЬ</div><div id="statSpeed" class="stat-value">0</div></div>
+        <div class="stat-card"><div class="stat-label">🛡️БРОНЯ</div><div id="statArmor" class="stat-value">0</div></div>
+        <div class="stat-card"><div class="stat-label">💥УРОН</div><div id="statDamage" class="stat-value">0</div></div>
+        <div class="stat-card extra-armor"><div class="stat-label">✨ДОП. БРОНЯ</div><div id="statExtraArmor" class="stat-value">0</div></div>
     </div>
 
     <div class="info-text">
-        🔧 База: Скорость 40 | Броня 120 | Урон 15 | Доп.броня 5 <br>
+        🔧 Нач.параметры: Скорость 40 | Броня 120 | Урон 15 | Доп.броня 5 <br>
         🧩 Каждая деталь добавляет модификаторы. Доп. броня суммируется отдельно!
     </div>
     <button class="share-btn" id="copyStatsBtn">📋 СКОПИРОВАТЬ ХАРАКТЕРИСТИКИ ТАНКА</button>
